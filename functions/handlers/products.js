@@ -63,33 +63,31 @@ exports.addToCart = (req, res) => {
     })
     .then((data) => {
       if (data.empty) {
-        return db
-          .collection("incartProducts")
-          .add({
-            productId: req.params.productId,
-            username: req.user.username,
-            quantity: 1,
-            createdAt: new Date().toISOString(),
-          })
-          .then(() => {
-            if (stock > 0) {
+        if (stock > 0) {
+          return db
+            .collection("incartProducts")
+            .add({
+              productId: req.params.productId,
+              username: req.user.username,
+              quantity: 1,
+              createdAt: new Date().toISOString(),
+            })
+            .then(() => {
               let remainingStock = stock - 1;
               return productDocument.update({
                 stock: remainingStock,
               });
-            } else {
-              return res
-                .status(200)
-                .json({ error: "Oops, we are out of stock!" });
-            }
-          })
-          .then(() => {
-            tocartProductData.productId = req.params.productId;
-            tocartProductData.username = req.user.username;
-            tocartProductData.quantity = 1;
-            tocartProductData.createdAt = new Date().toISOString();
-            return res.json(tocartProductData);
-          });
+            })
+            .then(() => {
+              tocartProductData.productId = req.params.productId;
+              tocartProductData.username = req.user.username;
+              tocartProductData.quantity = 1;
+              tocartProductData.createdAt = new Date().toISOString();
+              return res.json(tocartProductData);
+            });
+        } else {
+          return res.status(200).json({ error: "Oops, we are out of stock!" });
+        }
       } else {
         return res.status(400).json({ error: "Product already in cart!" });
       }
