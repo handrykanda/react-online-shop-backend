@@ -99,3 +99,51 @@ exports.addToCart = (req, res) => {
       res.status(500).json({ error: err.code });
     });
 };
+
+// remove from cart
+exports.removeFromCart = (req, res) => {
+  const incartProductDocument = db
+    .collection("incartProducts")
+    .where("username", "==", req.user.username)
+    .where("productId", "==", req.params.productId)
+    .limit(1);
+
+  const productDocument = db.doc(`/products/${req.params.productId}`);
+
+  let stock;
+
+  productDocument
+    .get()
+    .then((doc) => {
+      if (doc.exists) {
+        stock = doc.data().stock;
+        return incartProductDocument.get();
+      } else {
+        return res.status(404).json({ error: "Product not found!" });
+      }
+    })
+    .then((data) => {
+      if (data.empty) {
+        return res
+          .status(400)
+          .json({ error: "Product not added to cart before!" });
+      } else {
+        return db
+          .doc(`/incartProducts/${data.docs[0].id}`)
+          .delete()
+          .then(() => {
+            let newStock = stock + 1;
+            return productDocument.update({
+              stock: newStock,
+            });
+          })
+          .then(() => {
+            return res.json({ message: "Removed successfully" });
+          });
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).json({ error: err.code });
+    });
+};

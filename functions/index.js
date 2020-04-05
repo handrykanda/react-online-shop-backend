@@ -6,7 +6,12 @@ app.use(cors());
 
 const FBAuth = require("./util/FBAuth");
 
-const { getProducts, getProduct, addToCart } = require("./handlers/products");
+const {
+  getProducts,
+  getProduct,
+  addToCart,
+  removeFromCart,
+} = require("./handlers/products");
 const {
   signup,
   login,
@@ -18,6 +23,7 @@ const {
 app.get("/products", getProducts);
 app.get("/product/details/:productId", getProduct);
 app.get("/product/:productId/incart", FBAuth, addToCart);
+app.get("/product/:productId/outcart", FBAuth, removeFromCart);
 
 //user routes
 app.post("/signup", signup);
