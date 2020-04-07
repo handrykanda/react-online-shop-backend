@@ -12,6 +12,7 @@ const {
   addToCart,
   removeFromCart,
   increaseQty,
+  decreaseQty,
 } = require("./handlers/products");
 const {
   signup,
@@ -26,6 +27,7 @@ app.get("/product/details/:productId", getProduct);
 app.get("/product/:productId/incart", FBAuth, addToCart);
 app.get("/product/:productId/outcart", FBAuth, removeFromCart);
 app.get("/product/:productId/increase", FBAuth, increaseQty);
+app.get("/product/:productId/decrease", FBAuth, decreaseQty);
 
 //user routes
 app.post("/signup", signup);

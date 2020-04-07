@@ -214,3 +214,78 @@ exports.increaseQty = (req, res) => {
       res.status(500).json({ error: err.code });
     });
 };
+
+// decrease cart
+exports.decreaseQty = (req, res) => {
+  let tocartProductData = {};
+  const incartProductDocument = db
+    .collection("incartProducts")
+    .where("username", "==", req.user.username)
+    .where("productId", "==", req.params.productId)
+    .limit(1);
+
+  const productDocument = db.doc(`/products/${req.params.productId}`);
+
+  let stock;
+  let incartPrice;
+  let sellingPrice;
+  let incartQty;
+
+  productDocument
+    .get()
+    .then((doc) => {
+      if (doc.exists) {
+        stock = doc.data().stock;
+        sellingPrice = doc.data().price;
+
+        return incartProductDocument.get();
+      } else {
+        return res.status(404).json({ error: "Product not found!" });
+      }
+    })
+    .then((data) => {
+      if (data.empty) {
+        return res.status(400).json({ error: "Product not in cart!" });
+      } else {
+        let newStock = stock + 1;
+        incartQty = data.docs[0].data().quantity - 1;
+        if (incartQty > 0) {
+          incartPrice = sellingPrice * incartQty;
+          return db
+            .doc(`/incartProducts/${data.docs[0].id}`)
+            .update({
+              quantity: incartQty,
+              price: incartPrice,
+            })
+            .then(() => {
+              return productDocument.update({
+                stock: newStock,
+              });
+            })
+            .then(() => {
+              return incartProductDocument.get();
+            })
+            .then((data) => {
+              tocartProductData = data.docs[0].data();
+              return res.json(tocartProductData);
+            });
+        } else {
+          return db
+            .doc(`/incartProducts/${data.docs[0].id}`)
+            .delete()
+            .then(() => {
+              return productDocument.update({
+                stock: newStock,
+              });
+            })
+            .then(() => {
+              return res.json({ message: "Removed from cart successfully" });
+            });
+        }
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).json({ error: err.code });
+    });
+};
