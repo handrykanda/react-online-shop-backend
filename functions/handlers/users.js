@@ -125,12 +125,15 @@ exports.getAuthenticatedUser = (req, res) => {
     })
     .then((data) => {
       userData.incartProducts = [];
+      userData.totalPrice = eval(0);
       data.forEach((doc) => {
+        userData.totalPrice += eval(doc.data().price);
         userData.incartProducts.push({
           productId: doc.data().productId,
           createdAt: doc.data().createdAt,
           username: doc.data().username,
           quantity: doc.data().quantity,
+          price: doc.data().price,
           incartProductId: doc.id,
         });
       });
