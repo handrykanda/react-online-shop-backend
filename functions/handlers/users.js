@@ -126,8 +126,10 @@ exports.getAuthenticatedUser = (req, res) => {
     .then((data) => {
       userData.incartProducts = [];
       userData.totalPrice = eval(0);
+      userData.totalItems = eval(0);
       data.forEach((doc) => {
         userData.totalPrice += eval(doc.data().price);
+        userData.totalItems += eval(doc.data().quantity);
         userData.incartProducts.push({
           productId: doc.data().productId,
           createdAt: doc.data().createdAt,
