@@ -135,6 +135,8 @@ exports.getAuthenticatedUser = (req, res) => {
           createdAt: doc.data().createdAt,
           username: doc.data().username,
           quantity: doc.data().quantity,
+          title: doc.data().title,
+          image: doc.data().image,
           price: doc.data().price,
           incartProductId: doc.id,
         });

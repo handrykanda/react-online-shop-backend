@@ -50,6 +50,8 @@ exports.addToCart = (req, res) => {
 
   let stock;
   let sellingPrice;
+  let title;
+  let image;
 
   productDocument
     .get()
@@ -57,6 +59,8 @@ exports.addToCart = (req, res) => {
       if (doc.exists) {
         stock = doc.data().stock;
         sellingPrice = doc.data().price;
+        title = doc.data().title;
+        image = doc.data().image;
 
         return incartProductDocument.get();
       } else {
@@ -73,6 +77,8 @@ exports.addToCart = (req, res) => {
               username: req.user.username,
               quantity: 1,
               price: sellingPrice,
+              image: image,
+              title: title,
               createdAt: new Date().toISOString(),
             })
             .then(() => {
@@ -86,6 +92,8 @@ exports.addToCart = (req, res) => {
               tocartProductData.username = req.user.username;
               tocartProductData.quantity = 1;
               tocartProductData.price = sellingPrice;
+              tocartProductData.title = title;
+              tocartProductData.image = image;
               tocartProductData.createdAt = new Date().toISOString();
               return res.json(tocartProductData);
             });
