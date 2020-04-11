@@ -51,14 +51,27 @@ exports.validateLoginData = (userData) => {
 
 exports.reduceUserDetails = (data) => {
   let userDetails = {};
+  let errors = {};
+  if (isEmpty(data.phone)) {
+    errors.phone = "Must not be empty";
+  } else {
+    userDetails.phone = data.phone;
+  }
+  if (isEmpty(data.location)) {
+    errors.location = "Must not be empty";
+  } else {
+    userDetails.location = data.location;
+  }
 
-  if (!isEmpty(data.phone.trim())) userDetails.phone = data.phone;
   if (!isEmpty(data.website.trim())) {
     if (data.website.trim().substring(0, 4) !== "http") {
       userDetails.website = `http://${data.website.trim()}`;
     } else userDetails.website = data.website;
   }
-  if (!isEmpty(data.location.trim())) userDetails.location = data.location;
 
-  return userDetails;
+  return {
+    errors,
+    valid: Object.keys(errors).length === 0 ? true : false,
+    userDetails,
+  };
 };

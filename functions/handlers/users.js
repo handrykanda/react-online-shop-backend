@@ -95,7 +95,9 @@ exports.login = (req, res) => {
 
 // add more user details
 exports.addUserDetails = (req, res) => {
-  let userDetails = reduceUserDetails(req.body);
+  const { valid, errors, userDetails } = reduceUserDetails(req.body);
+
+  if (!valid) return res.status(400).json(errors);
 
   db.doc(`/users/${req.user.username}`)
     .update(userDetails)
@@ -136,7 +138,7 @@ exports.getAuthenticatedUser = (req, res) => {
           username: doc.data().username,
           quantity: doc.data().quantity,
           title: doc.data().title,
-          image: doc.data().image,
+          thumbnail: doc.data().thumbnail,
           price: doc.data().price,
           incartProductId: doc.id,
         });
