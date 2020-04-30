@@ -1,4 +1,4 @@
-# **React + Redux + Firebase Backend Project - Google Cloud Functions **
+# **React + Redux + Firebase Backend Project - Google Cloud Functions**
 
 ## **Live Demo:**
 
@@ -32,7 +32,7 @@ Great! You can now copy and paste other files in this repo.
 ## **Testing**
 
 You can test this using [Postman](https://www.postman.com/downloads) <br> OR
-clone the repo on this [link](https://github.com/handrykanda/react-online-shop), please note that it has some setup process that takes few minutes.
+clone the repo on this [link](https://github.com/handrykanda/react-online-shop), please note that it has some setup stuff that takes few minutes.
 
 ## **Functionality overview**
 
